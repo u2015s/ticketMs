@@ -12,7 +12,8 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
+import axios from "axios";
+import { useHistory  } from "react-router-dom";
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -29,13 +30,37 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignUpSide() {
-  const handleSubmit = (event) => {
+  let history = useHistory();
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
       email: data.get('email'),
       password: data.get('password'),
+      name: data.get('name'),
     });
+
+      try {
+        const data2 = await axios.post("/api/auth/register", {
+          email: data.get('email'),
+          password: data.get('password'),
+          name:data.get('name')
+        });
+
+        const { token, _id } = data2.data.data;
+
+        localStorage.setItem(
+          "login",
+          JSON.stringify({ token, _id, isLoggedIn: true })
+        );
+        history.push("/");
+
+      } catch (error) {
+        
+        alert(error)
+        console.log(error)
+      }
   };
 
   return (

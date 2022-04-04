@@ -13,6 +13,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from "axios";
+import { useHistory  } from "react-router-dom";
 
 function Copyright(props) {
   return (
@@ -30,26 +31,30 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignInSide() {
-  const handleSubmit = async (event) => {
+    let history = useHistory();
+
+    
+    
+
+    const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    
 
+
+    
     try {
-      const { data2 } = await axios.post("/auth/login", {
+      const data2 = await axios.post("/api/auth/login", {
         email: data.get('email'),
         password: data.get('password'),
       });
-      const { token, name, email, _id } = data2;
-      console.log(data2)
+
+      const { token, _id } = data2.data.data;
       localStorage.setItem(
         "login",
-        JSON.stringify({ token, email, _id, name, isLoggedIn: true })
+        JSON.stringify({ token, _id, isLoggedIn: true })
       );
-
+      history.push("/");
     } catch (error) {
        
       alert(error)

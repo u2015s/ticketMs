@@ -37,7 +37,11 @@ React.useEffect(() => {
 async function getInfo() {
     console.log("38")
     try {
-        const { data } = await axios.get("/api/booking/" + user._id);
+        const { data } = await axios.get("/api/booking/" + user._id,{
+          headers: {
+            'Authorization': `Bearer ${user.token}`
+          }
+        });
         setMyBookings(data.data)
         // console.log(data.data)
     } catch (error) {

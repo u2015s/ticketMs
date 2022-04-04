@@ -14,7 +14,7 @@ app.use(express.static(path.join(__dirname, './client/build')));
 
 app.use('/api/auth', require("./routes/auth.routes.js"))
 app.use('/api/train', require("./routes/train.routes.js"))
-// app.use(verifyAuthentication)
+app.use(verifyAuthentication)
 app.use('/api/booking', require("./routes/booking.routes.js"))
 
 app.get('/*', (req, res) => {

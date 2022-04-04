@@ -12,10 +12,13 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import MyBookingsModal from './MyBookingsModal'
+import { useHistory  } from "react-router-dom";
+
 const pages = ['See Bookings'];
 const settings = [ 'Logout'];
-
 export default function Navbar(){
+  let history = useHistory();
+
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [open, setOpen] = React.useState(false);
@@ -38,7 +41,12 @@ export default function Navbar(){
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+  function onLogOutClick(){
+    localStorage.clear();
+    // navigate('/signin');
+    history.push("/signin");
 
+  }
   return (
     <>
     
@@ -140,7 +148,7 @@ export default function Navbar(){
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                <MenuItem key={setting} onClick={onLogOutClick}>
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}

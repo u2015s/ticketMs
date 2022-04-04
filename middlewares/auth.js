@@ -10,7 +10,8 @@ const verifyAuthentication = async (req, res, next) => {
     const decoded = jwt.verify(token, privateKey);
 
     // const user = await User.findById(decoded._id);
-    const user = await db.query(`SELECT * FROM users WHERE id="${decoded._id}"`);
+    // console.log(decoded)
+    const user = await db.query(`SELECT * FROM users WHERE email='${decoded.email}'`);
     // return existingUser;
     if (!user) {
       return res.status(401).json({
@@ -18,7 +19,8 @@ const verifyAuthentication = async (req, res, next) => {
       });
     }
 
-    req.user = user;
+    req.user = user[0];
+    // console.log(req.user.id)
     next();
   } catch (error) {
     // console.error(error);

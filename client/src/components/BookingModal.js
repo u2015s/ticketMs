@@ -39,7 +39,7 @@ export default function BookingModal({ state, handleClose, bookingData }) {
     //   const handleClose = () => setOpen(false);
 
     React.useEffect(() => {
-        if(state===true){
+        if (state === true) {
             getInfo()
         }
         setOpen(state)
@@ -51,7 +51,12 @@ export default function BookingModal({ state, handleClose, bookingData }) {
             date: bookingData.date.substring(0, 10)
         }
         try {
-            const { data } = await axios.post("/api/booking/checkSeatInfo", postData);
+            // axios.defaults.headers.common['Authorization'] = `Bearer ${user.token}` 
+            const { data } = await axios.post("/api/booking/checkSeatInfo",postData, {
+                headers: {
+                    'Authorization': `Bearer ${user.token}`
+                }
+            });
             setSeats(data.data)
             // console.log(data.data)
         } catch (error) {
@@ -62,8 +67,8 @@ export default function BookingModal({ state, handleClose, bookingData }) {
     //     // setTimeout(() => {
     //     //     setSeats(67)
     //     // }, 1000); 
-       
-       
+
+
     // },[])
     function showBookingData() {
 
@@ -106,7 +111,11 @@ export default function BookingModal({ state, handleClose, bookingData }) {
         }
         // console.log(sendData)
         try {
-            const { data } = await axios.post("/api/booking/bookTicket", sendData);
+            const { data } = await axios.post("/api/booking/bookTicket",sendData, {
+                headers: {
+                    'Authorization': `Bearer ${user.token}`
+                }
+            });
             // console.log(data)
             if (data.message === "ticket booked successfully") {
                 alert('Ticket booking successfully. Seat Number are:' + data.data.seatNumbers)

@@ -1,5 +1,5 @@
 import './App.css';
-import React,{useEffect} from 'react';
+import React, { useEffect } from 'react';
 import SignIn from './Pages/SignIn'
 import SignUp from './Pages/SignUp'
 import Home from './Pages/Home'
@@ -7,33 +7,31 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
+  Switch
 } from "react-router-dom";
-
+import PrivateRoute from './components/PrivateRoute'
+// import { useHistory  } from "react-router-dom";
 function App() {
-  // const [isLoggedIn, setIsLoggedIn] = React.useState(false);
 
-  useEffect(()=>{
-    let obj = {
-      token:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3QxMzRAZ21haWwuY29tIiwiaWF0IjoxNjQ5MDQ0NDEzLCJleHAiOjE2NDkxMzA4MTN9.owkzuIj7abPJIuc_IfgtUQIgGEziQL45VUOQhJbwozw",
-      name:"User Name",
-      email:"test134@gmail.com",
-      _id:"g2pca1xcl1f69ee2"
-    };
-    const { token, name, email, _id } = obj;
-    localStorage.setItem(
-      "login",
-      JSON.stringify({ token, email, _id, name, isLoggedIn: true })
-    );
-    // setIsLoggedIn(true)
-  },[])
   return (
     <>
       <Router>
-        <Routes>
-            <Route exact path="/" element={<Home />} />
-            {/* <Route exact path="/signin" element={<SignIn />} />
-            <Route exact path="/signup" element={<SignUp />} /> */}
-        </Routes>
+        <Switch>
+          <Route exact path="/signin">
+            <SignIn />
+          </Route>
+
+          <Route exact path="/signup">
+            <SignUp />
+          </Route>
+
+          <PrivateRoute>
+            <Route exact path="/">
+              <Home />
+            </Route>
+          </PrivateRoute>
+
+        </Switch>
       </Router>
 
     </>

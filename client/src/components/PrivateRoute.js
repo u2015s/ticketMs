@@ -1,7 +1,8 @@
 import React from "react";
-import { Redirect, Route } from "react-router";
+import { Redirect, Route } from "react-router-dom";
 
 export default function PrivateRoute({ path, ...props }) {
+
   let login
   if ("login" in localStorage) {
     login = JSON.parse(localStorage.getItem("login"));

@@ -9,13 +9,28 @@ async function FindUser({ email }){
       const existingUser = await db.query(`SELECT * FROM users WHERE email="${email}"`);
       return existingUser;
   }catch(err){
-      throw new AppError("User Not Found",404)
+      throw new Error("User Not Found")
   }
 }
 
+async function CreateUser({ email, password, name}){
+  try{
+      let id = uniqid()
+      await db.query(
+          `INSERT INTO users (id,name,email,password)
+          VALUES ('${id}', '${name}', '${email}', '${password}')`
+      );
+      return {
+          id:id
+      };
+  }catch(err){
+      throw new Error("Unable to Create User")
+  }
+}
 exports.login =  async (req, res) => {
     try {
       const { email, password } = req.body;
+      // console.log(email, password)
           let existingUser = await FindUser({ email });
 
             if (existingUser.length > 0) {
@@ -24,7 +39,10 @@ exports.login =  async (req, res) => {
 
                 if (validPassword) {
                     const token = await GenerateSignature({ email: existingUser.email, _id: existingUser._id });
-                    return ({ id: existingUser.id, token });
+                    
+                    return res.status(200).json({
+                      data:{ _id: existingUser.id, token, }
+                    });
                 }else{
                     return res.status(400).json({
                       message: "Invalid Password",
@@ -52,34 +70,30 @@ exports.login =  async (req, res) => {
 
 exports.register = async (req, res) => {
     try {
-      const { email, password } = req.body;
-      const foundUser = await User.findOne({ email });
+      const { email, password, name } = req.body;
 
-      if (!foundUser) {
-        return res.status(403).json({
-          message: "Incorrect email or password!",
-        });
-      } else {
-        const isPasswordValid = bcrypt.compare(password, foundUser.password);
-        if (!isPasswordValid) {
-          return res.status(403).json({
-            message: "Incorrect password.",
-          });
-        }
-  
-        const token = generateAuthToken(foundUser._id);
-  
-        return res.status(200).json({
-          message: "Logged in successfully.",
-          response: {
-            token,
-            name: foundUser.name,
-            email: foundUser.email,
-            role:foundUser.role,
-            _id: foundUser._id,
-          },
-        });
-      }
+                const foundUser = await FindUser({ email });
+                // console.log(foundUser)
+                if (foundUser.length > 0) {
+                  return res.status(400).json({
+                    message: "User with this email already exists.",
+                  });
+                }else {
+            
+
+                  let salt = await GenerateSalt();
+
+                  let userPassword = await GeneratePassword(password, salt);
+
+                  const existingUser = await CreateUser({ email, password: userPassword, name });
+                  
+                  const token = await GenerateSignature({ email: email, _id: existingUser.id });
+                  
+                  return res.status(200).json({
+                    data:{_id: existingUser.id, token: token}
+                  });
+
+                }
     } catch (error) {
       return res.status(500).json({
         message: "Something went wrong!",
