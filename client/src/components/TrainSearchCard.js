@@ -12,9 +12,9 @@ import axios from "axios";
 // import LocalizationProvider from '@mui/lab/LocalizationProvider';
 
 export default function TrainSearchCard({setTrainData}) {
-    const [from, setFrom] = React.useState('MMCT');
-    const [to, setTo] = React.useState('SUNR');
-    const [date, setDate] = React.useState(new Date('2022-04-05'));
+    const [from, setFrom] = React.useState('');
+    const [to, setTo] = React.useState('');
+    const [date, setDate] = React.useState(new Date(''));
 
     async function submit(){
         let postData = {
@@ -94,7 +94,7 @@ export default function TrainSearchCard({setTrainData}) {
                             InputLabelProps={{
                                 shrink: true,
                             }}
-                            InputProps={{inputProps: { min: "2022-04-05", max: "2022-04-08"} }}
+                            InputProps={{inputProps: { min: today, max: "2022-04-08"} }}
                             onChange = {(e) => setDate(e.target.value)}
                         />
                     </Grid>

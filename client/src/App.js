@@ -10,6 +10,8 @@ import {
 } from "react-router-dom";
 
 function App() {
+  // const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+
   useEffect(()=>{
     let obj = {
       token:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3QxMzRAZ21haWwuY29tIiwiaWF0IjoxNjQ5MDQ0NDEzLCJleHAiOjE2NDkxMzA4MTN9.owkzuIj7abPJIuc_IfgtUQIgGEziQL45VUOQhJbwozw",
@@ -22,14 +24,15 @@ function App() {
       "login",
       JSON.stringify({ token, email, _id, name, isLoggedIn: true })
     );
+    // setIsLoggedIn(true)
   },[])
   return (
     <>
       <Router>
         <Routes>
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/" element={<Home />} />
+            <Route exact path="/" element={<Home />} />
+            {/* <Route exact path="/signin" element={<SignIn />} />
+            <Route exact path="/signup" element={<SignUp />} /> */}
         </Routes>
       </Router>
 

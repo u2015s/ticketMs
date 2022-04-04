@@ -2,50 +2,45 @@ const bcrypt = require("bcryptjs");
 const generateAuthToken = require("../utils/generateAuthToken");
 const validator = require('validator');
 const {db} = require('../db');
-var uniqid = require('uniqid'); 
+var uniqid = require('uniqid'); const { FormateData, GeneratePassword, GenerateSalt, GenerateSignature, ValidatePassword } = require('../utils');
 
-exports.register =  async (req, res) => {
+async function FindUser({ email }){
+  try{
+      const existingUser = await db.query(`SELECT * FROM users WHERE email="${email}"`);
+      return existingUser;
+  }catch(err){
+      throw new AppError("User Not Found",404)
+  }
+}
+
+exports.login =  async (req, res) => {
     try {
-      const { email } = req.body;
-      // console.log(email)
-      const foundUser = await User.findOne({ email });
-      if (foundUser) {
-        return res.status(400).json({
-          message: "User with this email already exists.",
-        });
-      } else {
-          let user = await new User(req.body);
-          const salt = await bcrypt.genSalt(10);
+      const { email, password } = req.body;
+          let existingUser = await FindUser({ email });
 
-          //password check
-          if (!user.password.length > 6) {
-              throw new Error('Password must be greated than 6');
-          }
-          user.password = await bcrypt.hash(user.password, salt);
+            if (existingUser.length > 0) {
+                existingUser = existingUser[0]
+                const validPassword = await ValidatePassword(password, existingUser.password);
 
-          if(req.body.role === "tax-accountant"){
-            let profile = await taxAccountantProfile.create({})
-            // console.log(profile)
-            user.profileId = profile._id
-          }else if (req.body.role === "tax-payer"){
-            let profile = await taxPayerProfile.create({})
-            // console.log(profile)
-            user.profileId = profile._id
-          }
+                if (validPassword) {
+                    const token = await GenerateSignature({ email: existingUser.email, _id: existingUser._id });
+                    return ({ id: existingUser.id, token });
+                }else{
+                    return res.status(400).json({
+                      message: "Invalid Password",
+                      error: error.message,
+                    });
+                }
 
-          user = await user.save();     
-          const token = generateAuthToken(user._id);
+            }else{
+              return res.status(404).json({
+                message: "User Not Found",
+                error: error.message,
+              });
+            }
 
-          return res.status(201).json({
-              message: "User created successfully.",
-              response: {
-                name: user.name,
-                email: user.email,
-                _id: user._id,
-                token,
-              },
-          });
-      }
+
+
     } catch (error) {
       return res.status(500).json({
         message: "Something went wrong!",
@@ -55,7 +50,7 @@ exports.register =  async (req, res) => {
   }
 
 
-exports.login = async (req, res) => {
+exports.register = async (req, res) => {
     try {
       const { email, password } = req.body;
       const foundUser = await User.findOne({ email });
