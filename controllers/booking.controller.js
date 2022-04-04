@@ -113,7 +113,7 @@ exports.getSeatAvail = async (req, res) => {
 }
 
 exports.getBookings = async (req, res) => {
-  
+    // console.log(req.params.userId)
     try{
       let bookings = await db.query(`
       SELECT * FROM ticketms.booking WHERE userId ='${req.params.userId}';`

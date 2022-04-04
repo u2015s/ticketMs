@@ -35,15 +35,22 @@ React.useEffect(() => {
 }, [state])
 
 async function getInfo() {
-    console.log("38")
+    console.log(user.token,`Bearer ${user.token}`)
     try {
-        const { data } = await axios.get("/api/booking/" + user._id,{
+      let path = "/api/booking/" + user._id
+        const { data } = await axios.get(path,
+          // { params:{}, headers: { 'Authorization': `Bearer ${user.token}` } }
+        {
           headers: {
-            'Authorization': `Bearer ${user.token}`
+          Authorization: `Bearer ${user.token}`
           }
-        });
+        }
+        
+        );
+        // const { data } = await axios({ method: 'get', url: path, headers: { 'Authorization': `Bearer ${user.token}` } })
+        console.log(data.data)
+
         setMyBookings(data.data)
-        // console.log(data.data)
     } catch (error) {
         console.log(error)
     }

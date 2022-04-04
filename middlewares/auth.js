@@ -5,6 +5,7 @@ const privateKey = process.env.JWT_KEY;
 
 const verifyAuthentication = async (req, res, next) => {
   try {
+
     const bearerToken = req.headers["authorization"];
     const token = bearerToken.split(" ")[1];
     const decoded = jwt.verify(token, privateKey);
@@ -18,12 +19,12 @@ const verifyAuthentication = async (req, res, next) => {
         message: "You're not authorized to access this information.",
       });
     }
-
+    
     req.user = user[0];
     // console.log(req.user.id)
     next();
   } catch (error) {
-    // console.error(error);
+    console.error(error);
     res.status(401).json({
       message: "You're not authorized to acess this information.",
       error: error.message,
